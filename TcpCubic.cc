@@ -1,4 +1,7 @@
 /*
+//
+// SPDX-FileCopyrightText: 2024 Friedrich-Alexander University Erlangen-Nuernberg (FAU), Computer Science 7 - Computer Networks and Communication Systems
+//
  * TcpCubic.cc
  *
  *  Created on: Sep 28, 2023
