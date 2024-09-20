@@ -1047,4 +1047,4 @@ void TcpCubic::bictcp_update()    //check this method and eventually call it fro
 
         tcpFriendlinessLogic();   //state, state->ack_cnt
 
-
+}
