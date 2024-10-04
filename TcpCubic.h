@@ -51,31 +51,31 @@ class INET_API TcpCubicStateVariables : public TcpBaseAlgStateVariables
     bool tcp_friendliness;
     // Cubic parameters
 
-    uint32_t    hystartLowWindow;
-    uint32_t    hystartMinSamples;
+    uint32_t hystartLowWindow;
+    uint32_t hystartMinSamples;
     simtime_t hystartAckDelta;
     simtime_t hystartDelayMin;
     simtime_t hystartDelayMax;
     simtime_t cubicDelta;
 
-    uint32_t  ssthresh;        /* < slow start threshold */
-	uint32_t	cnt;				/* increase cwnd by 1 after ACKs */
-	uint32_t	last_max_cwnd;		/* last maximum snd_cwnd */
-	uint32_t	last_cwnd;			/* the last snd_cwnd */
-	simtime_t   last_time;			/* time when updated last_cwnd */
-	uint32_t	bic_origin_point;	/* origin point of bic function */
+        uint32_t ssthresh;        /* < slow start threshold */
+	uint32_t cnt;				/* increase cwnd by 1 after ACKs */
+	uint32_t last_max_cwnd;		/* last maximum snd_cwnd */
+	uint32_t last_cwnd;			/* the last snd_cwnd */
+	simtime_t last_time;			/* time when updated last_cwnd */
+	uint32_t bic_origin_point;	/* origin point of bic function */
 	double	bic_K;				/* time to origin point                 initially was "double"
 				  	 					from the beginning of the current epoch */
-	simtime_t	delay_min;			/* min delay (usec) */
-	simtime_t	epoch_start;		/* beginning of an epoch */                       //uint32_t
-	uint32_t	ack_cnt;			/* number of acks */
-	uint32_t	tcp_cwnd;			/* estimated tcp cwnd */
-	uint16	unused;
-	uint32_t		sample_cnt;			/* number of samples to decide curr_rtt */
-	simtime_t	round_start;		/* beginning of each round */
-	uint32_t	end_seq;			/* end_seq of the round */
-	simtime_t	last_ack;			/* last time when the ACK spacing is close */
-	simtime_t   curr_rtt;			/* the minimum rtt of current round */
+	simtime_t delay_min;			/* min delay (usec) */
+	simtime_t epoch_start;		/* beginning of an epoch */                       //uint32_t
+	uint32_t ack_cnt;			/* number of acks */
+	uint32_t tcp_cwnd;			/* estimated tcp cwnd */
+
+	uint32_t sample_cnt;			/* number of samples to decide curr_rtt */
+	simtime_t round_start;		/* beginning of each round */
+	uint32_t end_seq;			/* end_seq of the round */
+	simtime_t last_ack;			/* last time when the ACK spacing is close */
+	simtime_t curr_rtt;			/* the minimum rtt of current round */
 	uint32_t sampleCnt;
 	uint32_t cWndCnt;
 	uint32_t endSeq;                    /*  end sequence of the round   */
