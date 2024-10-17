@@ -75,7 +75,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
       fast_convergence;   // true = 1
       tcp_friendliness;
       beta = 0.7;
-//      hystart; //true;    false                  // if this is "true" the slow start will get very-slow TO BE adjusted
+             
 
 
 
@@ -88,7 +88,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
     cubicDelta = 10; //ms
       c = 0.4;
 
-        ssthresh = 0xFFFFFFFF;; // 0xffffffff; /* 15; was UINT32_MAX; */   //4294967295
+        ssthresh = 0xFFFFFFFF;; // 0xffffffff; /* 15; was UINT32_MAX; */  
         cnt = 0;                /* increase cwnd by 1 after ACKs */
         last_max_cwnd = 0;      /* last maximum snd_cwnd */
         last_cwnd = 0;          /* the last snd_cwnd */
@@ -204,7 +204,7 @@ double TcpCubic::do_div(double cube_factor, int bic_scale){
 }
 
 
-//Record W_max, restart the time at which a loss event occurr and set the ssthresh, recalculateSlowStartThreshold need to be called at each loss event
+
 
 void TcpCubic::recalculateSlowStartThreshold()       //uint32_t
 {
@@ -217,7 +217,7 @@ void TcpCubic::recalculateSlowStartThreshold()       //uint32_t
 
     /* Wmax and fast convergence */                            
         if (state->snd_cwnd < state->last_max_cwnd && state->fast_convergence ){   
-            state->last_max_cwnd = ((seg_cwnd * (1 + state->beta))/2) * state->snd_mss  ;   //(BICTCP_BETA_SCALE + BETA)) / (2 * BICTCP_BETA_SCALE);
+            state->last_max_cwnd = ((seg_cwnd * (1 + state->beta))/2) * state->snd_mss  ;   
 
         }
 
@@ -288,7 +288,7 @@ void TcpCubic::HystartReset()
 {
 
    state->round_start = state->last_ack = simTime();
-   state->endSeq = state->snd_max;                              // ** state->end_seqno ** the end sequence number of last received out-of-order segment
+   state->endSeq = state->snd_max;                             
     state->curr_rtt = SIMTIME_ZERO;
     state->sampleCnt = 0;
 }
@@ -368,7 +368,7 @@ simtime_t TcpCubic::HystartDelayThresh(const simtime_t t)
 
 
 
-void TcpCubic::IncreaseWindow()     // (TcpCubicStateVariables *& state, uint32_t segmentsAcked)
+void TcpCubic::IncreaseWindow()    
 {
 //    NS_LOG_FUNCTION(this << tcb << segmentsAcked);
 
@@ -630,14 +630,9 @@ void TcpCubic::receivedDuplicateAck()
 
    //martino (from RFC 8312)  with these steps (CUBIC does not change Fast Recovery and Retransmit of standard TCP): restart epoch_start=0, record W_max, rcord epoch_start (new at loss event), deflate cwnd  with beta
 
-                recalculateSlowStartThreshold();            //**
+                recalculateSlowStartThreshold();           
 
-//                state->epoch_start = simTime();
-
-//                uint32_t flight_size = std::min(state->snd_cwnd, state->snd_wnd);      //Added        **
-//                state->ssthresh = std::max(flight_size / 2, 2 * state->snd_mss);
-
-                state->recover = (state->snd_max - 1);   //recover variable could be the max value of CWND "W_max" in CUBIC, before the loss event
+                state->recover = (state->snd_max - 1);   
                 state->firstPartialACK = false;
                 state->lossRecovery = true;
                 EV_INFO << " set recover=" << state->recover;
@@ -768,7 +763,7 @@ uint32_t TcpCubic::cubic_root(uint64_t a){
 
 
 
-void TcpCubic::tcpFriendlinessLogic() {   //pobably the passed variable "uint32_t  ack_cnt" is not relevant            (TcpCubicStateVariables *& state, uint32_t ack_cnt)
+void TcpCubic::tcpFriendlinessLogic() {   
 
     double const_cal = ((3.0 * 0.2)/(2.0 - 0.2));
     double mul = ((double)(state->ack_cnt * state->snd_mss))/((double)state->snd_cwnd);
@@ -777,7 +772,7 @@ void TcpCubic::tcpFriendlinessLogic() {   //pobably the passed variable "uint32_
     state->ack_cnt = 0;
     if(state->tcp_cwnd > state->snd_cwnd)
     {
-        uint32_t max_cnt = (state->snd_cwnd / (state->tcp_cwnd - state->snd_cwnd));           //  (state->tcp_cwnd - state->snd_cwnd))/state->snd_mss
+        uint32_t max_cnt = (state->snd_cwnd / (state->tcp_cwnd - state->snd_cwnd));         
         if( state->cnt > max_cnt)
         {
             state->cnt = max_cnt;
@@ -788,11 +783,10 @@ void TcpCubic::tcpFriendlinessLogic() {   //pobably the passed variable "uint32_
 
 /*
  * Compute congestion window to use in Congestion Avoidance.        
- */      //   (TcpCubicStateVariables *& state, uint32_t acked)
-void TcpCubic::bictcp_update()    //check this method and eventually call it from the AckReceieved function above , in congAvoidance and when a full segment Ack is received
+ */     
+void TcpCubic::bictcp_update()   
 {
     uint32_t bic_target, max_cnt;
-//    uint64 offs;  //uint64
 
     double delta;
     simtime_t offs;
@@ -839,7 +833,7 @@ void TcpCubic::bictcp_update()    //check this method and eventually call it fro
      * if the cwnd < 1 million packets !!!
      */
 
-    t = (simTime() + state->minRTT - state->epoch_start);  // Assuming epoch_start is in simtime_t  , before jiffies = simTime()     .inUnit(SIMTIME_US)
+    t = (simTime() + state->minRTT - state->epoch_start);  
 
     state->c_t = t;
 
@@ -868,16 +862,10 @@ void TcpCubic::bictcp_update()    //check this method and eventually call it fro
 
     /* cubic function - calc bictcp_cnt*/
 
-    if (bic_target > state->snd_cwnd/state->snd_mss)   //could be                       state->snd_cwnd/state->snd_mss
+    if (bic_target > state->snd_cwnd/state->snd_mss)   
         state->cnt = state->snd_cwnd/state->snd_mss / (bic_target - state->snd_cwnd/state->snd_mss);
     else
         state->cnt = 100 * (state->snd_cwnd/state->snd_mss);  // very small increment
-
-
-//    // The initial growth of cubic function may be too conservative
-//    // when the available bandwidth is still unknown.
-//    if (state->last_max_cwnd == 0 && state->cnt > 20)
-//        state->cnt = 20;   // increase cwnd 5% per RTT
 
 
     if (state->tcp_friendliness == true)
