@@ -64,10 +64,10 @@ class INET_API TcpCubicStateVariables : public TcpBaseAlgStateVariables
 	uint32_t last_cwnd;			/* the last snd_cwnd */
 	simtime_t last_time;			/* time when updated last_cwnd */
 	uint32_t bic_origin_point;	/* origin point of bic function */
-	double	bic_K;				/* time to origin point                 initially was "double"
-				  	 					from the beginning of the current epoch */
+	double	bic_K;				/* time to origin point from the beginning of the current epoch */              
+				  	 					
 	simtime_t delay_min;			/* min delay (usec) */
-	simtime_t epoch_start;		/* beginning of an epoch */                       //uint32_t
+	simtime_t epoch_start;		/* beginning of an epoch */                      
 	uint32_t ack_cnt;			/* number of acks */
 	uint32_t tcp_cwnd;			/* estimated tcp cwnd */
 
