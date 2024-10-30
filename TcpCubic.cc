@@ -112,7 +112,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
         end_seq = 0;            /* end_seq of the round */
 
         sampleCnt = 0;
-        minRTT = SIMTIME_ZERO;                 // SIMTIME_ZERO        ** SIMTIME_MAX **
+        minRTT = SIMTIME_ZERO;                 
         K = SIMTIME_ZERO;
         c_t = SIMTIME_ZERO;
 
@@ -122,8 +122,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
              */
 
            beta_scale = 8*(BICTCP_BETA_SCALE+ BETA) / 3
-                / (BICTCP_BETA_SCALE - BETA);                    // if  defined in the state variable need to be called as state->beta if defined as statinc int, only call it like beta..
-
+                / (BICTCP_BETA_SCALE - BETA);                   
            cube_rtt_scale = (bic_scale * 10);  /* 1024*c/rtt */
 
             /* calculate the "K" for (wmax-cwnd) = c/rtt * K^3
