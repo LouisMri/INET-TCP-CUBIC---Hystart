@@ -72,7 +72,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
 
 
 //    ssthresh = 65535;
-      fast_convergence;   // true = 1
+      fast_convergence;   
       tcp_friendliness;
       beta = 0.7;
              
