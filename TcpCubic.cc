@@ -142,10 +142,6 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
             // Assuming cube_factor is a double or another numeric type
             cube_factor = pow(2.0, 10 + 3 * BICTCP_HZ);  // 2^40
 
-
-            /* divide by bic_scale and by constant Srtt (100ms) */
-//            do_div = inet::math::div(cube_factor, bic_scale * 10);
-
 }
 
 TcpCubicStateVariables::~TcpCubicStateVariables() {
