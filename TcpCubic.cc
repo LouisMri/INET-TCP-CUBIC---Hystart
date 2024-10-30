@@ -540,7 +540,7 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
 
 
 
-   //(from RFC 8312)  with these steps (need to be called at each loss event): restart epoch_start=0, record W_max, rcord epoch_start (new at loss event), deflate cwnd  with beta
+   //(from RFC 8312)  restart epoch_start=0, record W_max, rcord epoch_start (new at loss event), deflate cwnd
 
 
             EV_INFO << "Fast Recovery - Partial ACK received: retransmitting the first unacknowledged segment\n";
@@ -628,7 +628,7 @@ void TcpCubic::receivedDuplicateAck()
                 // the variable "recover", and go to Step 2."
 
 
-   //martino (from RFC 8312)  with these steps (CUBIC does not change Fast Recovery and Retransmit of standard TCP): restart epoch_start=0, record W_max, rcord epoch_start (new at loss event), deflate cwnd  with beta
+   // (from RFC 8312)  with these steps (CUBIC does not change Fast Recovery and Retransmit of standard TCP): restart epoch_start=0, record W_max, rcord epoch_start (new at loss event), deflate cwnd 
 
                 recalculateSlowStartThreshold();           
 
