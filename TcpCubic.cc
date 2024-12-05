@@ -10,7 +10,7 @@
 
 
 
-#include <algorithm>    // min,max
+#include <algorithm>    
 
 #include "inet/common/INETMath.h"
 #include "inet/transportlayer/tcp/Tcp.h"
@@ -21,16 +21,16 @@
 #include <cstddef>  
 #include <cstdint>  
 
-#define ACK_RATIO_SHIFT  4   // Defined in bic
+#define ACK_RATIO_SHIFT  4   
 
 #define BICTCP_BETA_SCALE  1024	/* Scale factor beta calculation
 					 * max_cwnd = snd_cwnd * beta
 					 */
 #define	BICTCP_HZ  10	/* BIC HZ 2^10 = 1024 */
 
-#define HZ  1000   // 1/1000    /* num of ticks (or clock interrupts)per second */
+#define HZ  1000       /* num of ticks (or clock interrupts)per second */
 
-#define SIMTIME_PRECISION 1u  // set simulation time resolution to microseconds
+#define SIMTIME_PRECISION 1u  
 
 
 /* Two methods of hybrid slow start */
@@ -73,7 +73,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
     hystartAckDelta = 0.002;   // 2ms
     hystartDelayMin= 0.004;    // 4ms
     hystartDelayMax = 1;       // 1000ms
-    cubicDelta = 10; //ms
+    cubicDelta = 10; 
       c = 0.4;
 
         ssthresh = 0xFFFFFFFF;; // 0xffffffff; /* */  
@@ -135,7 +135,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
 TcpCubicStateVariables::~TcpCubicStateVariables() {
 }
 
-simsignal_t TcpCubic::WmaxSignal = cComponent::registerSignal("Wmax"); // will record the WmaX
+simsignal_t TcpCubic::WmaxSignal = cComponent::registerSignal("Wmax"); 
 
 void TcpCubic::initialize()
 {
@@ -144,7 +144,6 @@ void TcpCubic::initialize()
     state->fast_convergence = true;
     state->tcp_friendliness = true;
     state->hystart_Detect == state->HybridSSDetectionMode::BOTH;
-    // Read the hyStart parameter from the NED file
 
 
 }
@@ -430,7 +429,7 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
 
 
 
-       //Find The RTT min
+       //Find the min rtt
        if(state->minRTT == SIMTIME_ZERO || state->minRTT > RTT)
        {
            state->minRTT = RTT;
@@ -486,7 +485,6 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
             EV_INFO << "Fast Recovery - Full ACK received: Exit Fast Recovery, setting cwnd to " << state->snd_cwnd << "\n";
 
             // option (2): set cwnd to ssthresh
-            // state->snd_cwnd = state->ssthresh;
             // tcpEV << "Fast Recovery - Full ACK received: Exit Fast Recovery, setting cwnd to ssthresh=" << state->ssthresh << "\n";
             // TODO - If the second option (2) is selected, take measures to avoid a possible burst of data (maxburst)!
             conn->emit(cwndSignal, state->snd_cwnd);
@@ -530,7 +528,7 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
 
             // deflate cwnd by amount of new data acknowledged by cumulative acknowledgement field
 
-            state->snd_cwnd -= state->snd_una - firstSeqAcked;       //**
+            state->snd_cwnd -= state->snd_una - firstSeqAcked;     
 
             conn->emit(cwndSignal, state->snd_cwnd);
 
@@ -564,7 +562,7 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
     else {
                 // Perform slow start and congestion avoidance.
 
-        IncreaseWindow();   //state, firstSeqAcked
+        IncreaseWindow();   
 
 
         state->recover = (state->snd_una - 2);
@@ -718,7 +716,7 @@ uint32_t TcpCubic::cubic_root(uint64_t a){
         /* 0x38 */  244,  245,  246,  248,  250,  251,  252,  254,
     };
 
-//    int b
+
     b = static_cast<int>(std::log2(a & -a)) + 1;
     if (b < 7) {
         /* a in [0..63] */
@@ -737,7 +735,6 @@ uint32_t TcpCubic::cubic_root(uint64_t a){
      *  k+1          k         k
      */
     x = (2 * x + static_cast<uint32_t>(inet::math::div(a, static_cast<uint64>(x) * static_cast<uint64>(x - 1))));
-    //x = (2 * x + (uint32_t_t)div64_u64(a, (uint64_t)x * (uint64_t)(x - 1)));   linux version
     x = ((x * 341) >> 10);
     return x;
 }
@@ -778,18 +775,17 @@ void TcpCubic::bictcp_update()
 
 
 
-    if (state->epoch_start == SIMTIME_ZERO) {    //SIMTIME_ZERO = 0
-        state->epoch_start = simTime();  // Record the beginning     ,  simTime()
+    if (state->epoch_start == SIMTIME_ZERO) {    
+        state->epoch_start = simTime();  
 
         if ((state->last_max_cwnd) < ( state->snd_cwnd)) {
-//           state->bic_K = 0.0;
-            state->K = SIMTIME_ZERO; //SimTime(state->bic_K);
+            state->K = SIMTIME_ZERO; 
             state->bic_origin_point = state->snd_cwnd;
         } else {
  
 
             double dividend = static_cast<double>(state->last_max_cwnd - state->snd_cwnd);
-            dividend = dividend/state->snd_mss; //convert to segments
+            dividend = dividend/state->snd_mss; 
             double cubic_root = dividend / state->c;
             state->bic_K = std::cbrtl(cubic_root);
             state->K = SimTime(state->bic_K);
@@ -820,7 +816,6 @@ void TcpCubic::bictcp_update()
     double d = SIMTIME_DBL(offs);;
       delta = std::pow(d , 3.0);
 
-    //  origin_point + C*(t-K)^3
     uint32_t factor =  static_cast<uint32_t>(state->c * delta);
 
 
@@ -835,11 +830,10 @@ void TcpCubic::bictcp_update()
     if (bic_target > state->snd_cwnd/state->snd_mss)   
         state->cnt = state->snd_cwnd/state->snd_mss / (bic_target - state->snd_cwnd/state->snd_mss);
     else
-        state->cnt = 100 * (state->snd_cwnd/state->snd_mss);  // very small increment
-
+        state->cnt = 100 * (state->snd_cwnd/state->snd_mss); 
 
     if (state->tcp_friendliness == true)
 
-        tcpFriendlinessLogic();   //state, state->ack_cnt
+        tcpFriendlinessLogic();   
 
 }
