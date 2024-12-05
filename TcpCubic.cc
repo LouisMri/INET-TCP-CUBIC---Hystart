@@ -17,9 +17,9 @@
 #include "inet/transportlayer/tcp/flavours/TcpNewReno.h"
 #include "inet/transportlayer/tcp/flavours/TcpCubic.h"
 #include <cmath>
-#include <cstring>  // for std::memset
-#include <cstddef>  // for std::offsetof
-#include <cstdint>  // for uint32_t_t and uint64_t
+#include <cstring> 
+#include <cstddef>  
+#include <cstdint>  
 
 #define ACK_RATIO_SHIFT  4   // Defined in bic
 
@@ -43,18 +43,12 @@
 #define HYSTART_DELAY_MAX	(16000U)	/* 16 ms */
 #define HYSTART_DELAY_THRESH(x)	inet::math::clamp(x, HYSTART_DELAY_MIN, HYSTART_DELAY_MAX)
 
-//    static int fast_convergence = 1;
+
 
 static int BETA = 717;  /* = 717/1024 (BICTCP_BETA_SCALE) */
 static int initial_ssthresh;
 static int bic_scale = 41;
 
-//    static int tcp_friendliness = 1;
-
-//    static int hystart = 1;
-//    static int hystart_detect  = HYSTART_ACK_TRAIN | HYSTART_DELAY;
-//    static int hystart_low_window = 16;
-//    static int hystart_ack_delta_us = 2000;
 
 
 using namespace inet;
@@ -70,17 +64,11 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
 //    CUBIC flow and without any other traffic, the fast convergence SHOULD
 //    be disabled.
 
-
-//    ssthresh = 65535;
       fast_convergence;   
       tcp_friendliness;
       beta = 0.7;
              
-
-
-
     hystartLowWindow = 16;    //segments
-//    hystartDetect(HybridSSDetectionMode::BOTH),
     hystartMinSamples = 8;
     hystartAckDelta = 0.002;   // 2ms
     hystartDelayMin= 0.004;    // 4ms
@@ -88,7 +76,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
     cubicDelta = 10; //ms
       c = 0.4;
 
-        ssthresh = 0xFFFFFFFF;; // 0xffffffff; /* 15; was UINT32_MAX; */  
+        ssthresh = 0xFFFFFFFF;; // 0xffffffff; /* */  
         cnt = 0;                /* increase cwnd by 1 after ACKs */
         last_max_cwnd = 0;      /* last maximum snd_cwnd */
         last_cwnd = 0;          /* the last snd_cwnd */
@@ -140,7 +128,7 @@ TcpCubicStateVariables::TcpCubicStateVariables() {
 
             /* 1/c * 2^2*bictcp_HZ * srtt */
             // Assuming cube_factor is a double or another numeric type
-            cube_factor = pow(2.0, 10 + 3 * BICTCP_HZ);  // 2^40
+            cube_factor = pow(2.0, 10 + 3 * BICTCP_HZ);  
 
 }
 
@@ -201,7 +189,7 @@ double TcpCubic::do_div(double cube_factor, int bic_scale){
 
 
 
-void TcpCubic::recalculateSlowStartThreshold()       //uint32_t
+void TcpCubic::recalculateSlowStartThreshold()      
 {
     EV_DEBUG << "recalculateSlowStartThreshold(), ssthresh=" << state->ssthresh
             << "\n";
@@ -365,7 +353,6 @@ simtime_t TcpCubic::HystartDelayThresh(const simtime_t t)
 
 void TcpCubic::IncreaseWindow()    
 {
-//    NS_LOG_FUNCTION(this << tcb << segmentsAcked);
 
     if (state->snd_cwnd < state->ssthresh)
     {
@@ -399,7 +386,7 @@ void TcpCubic::IncreaseWindow()
    else {
 
 
-        bictcp_update();      // ()state
+        bictcp_update();    
 
 
 
@@ -488,12 +475,11 @@ void TcpCubic::receivedDataAck(uint32_t firstSeqAcked)
             //
             // option (1): set cwnd to min (ssthresh, FlightSize + SMSS)     
 
-//            state->segmentsAcked = firstSeqAcked;
 
             uint32_t flight_size = state->snd_max - state->snd_una;
 
 
-            state->snd_cwnd = state->ssthresh;             // ++
+            state->snd_cwnd = state->ssthresh;             
 
 
 
@@ -817,26 +803,15 @@ void TcpCubic::bictcp_update()
     /* cubic function - calc*/
     /* calculate c * time^3 / rtt,
      *  while considering overflow in calculation of time^3
-     * (so time^3 is done by using 64 bit)
-     * and without the support of division of 64bit numbers
-     * (so all divisions are done by using 32 bit)
-     *  also NOTE the unit of those variables
-     *    time  = (t - K) / 2^bictcp_HZ
-     *    c = bic_scale >> 10
-     * rtt  = (srtt >> 3) / HZ
-     * !!! The following code does not have overflow problems,
-     * if the cwnd < 1 million packets !!!
      */
 
     t = (simTime() + state->minRTT - state->epoch_start);  
 
     state->c_t = t;
 
-    //    t += usecs_to_jiffies(state->delay_min);
 
     /* change the unit from HZ to bictcp_HZ */
 
-    //here K = state->bic_K
     if (t < state->K)
         offs = state->K - t;
     else
